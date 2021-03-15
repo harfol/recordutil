@@ -17,7 +17,7 @@ function format()
 function archive()
 {
 	if [ -d $1 ]; then
-		for dir in $( ls $1 | grep -E '[0-9]+-.*' )
+		for dir in $( ls $1 | grep -E '!*[0-9]+-.*' )
 		do
 			page_sum=0
 			scan_sum=0
@@ -34,7 +34,27 @@ function archive()
 
 }
 
+function find_name()
+{
+	
+	if [ -d $1 ] && [ -n "$2" ]; then
+		for dir in $(find $1 -maxdepth 1 -type d)
+		do
+		
+			dst_file=$(find $dir -name "*.txt" | head -n1)
+			txt=$( cat $dst_file | grep "$2"  )
+			if [ -n "$txt" ]; 
+			then
+				echo $dir
+			fi 
+		done
+			
+	fi
+
+}
+
+
 OLD_IFS=$IFS
 IFS=$'\n'
- format $1
+find_name $1 $2
 IFS=$OLD_IFS
